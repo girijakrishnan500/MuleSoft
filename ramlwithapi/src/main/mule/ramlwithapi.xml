@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="ramlwithapiFlow" doc:id="834617dd-d52c-4ac1-9ed1-87dd414e950c" >
+		<http:listener doc:name="Listener" doc:id="88fb157d-e4c1-4bfc-8367-a88b4d44e38d" path="/flights" allowedMethods="GET" config-ref="american-flights-api-httpListenerConfig"/>
+		<set-payload value="flight information will be display" doc:name="Set Payload" doc:id="d2c9463d-3e40-4a06-8198-55090a964258" />
+	</flow>
+</mule>

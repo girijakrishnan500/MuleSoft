@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:kafka="http://www.mulesoft.org/schema/mule/kafka"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/kafka http://www.mulesoft.org/schema/mule/kafka/current/mule-kafka.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="30ffc0a6-00a1-43e0-8b2e-697c5f6137c4" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<kafka:kafka-producer-config name="Apache_Kafka_Producer_configuration" doc:name="Apache Kafka Producer configuration" doc:id="5c77573a-b2a4-47f1-b66e-6c692e016313" >
+		<kafka:basic-kafka-producer-connection bootstrapServers="localhost:9092" />
+	</kafka:kafka-producer-config>
+	<kafka:kafka-consumer-config name="Apache_Kafka_Consumer_configuration" doc:name="Apache Kafka Consumer configuration" doc:id="0116f97e-5f72-49c6-9331-2e26710be7af" >
+		<kafka:basic-kafka-consumer-connection bootstrapServers="localhost:9092" groupId="test-consumer-group"/>
+	</kafka:kafka-consumer-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="ab571049-609a-434d-87c8-dd4e8093423f" >
+		<file:connection workingDir="src/test/resources/consumer" defaultWriteEncoding="UTF-8"/>
+	</file:config>
+	
+	<flow name="apachekafkaProducer" doc:id="c3beede0-96fc-4a4e-b931-e4c2eae841ea" >
+		<http:listener doc:name="Listener" doc:id="33763454-4135-4a6e-b1f3-21d71d6efa17" config-ref="HTTP_Listener_config" path="/kafka" allowedMethods="POST"/>
+		<logger level="INFO" doc:name="Logger" doc:id="e2b64007-b7ad-4139-a538-e53c7f32265a" message="Message Published: #[payload]"/>
+		<kafka:producer doc:name="Publish Message" doc:id="31ccba00-bfbc-4d6f-87ad-08a31b4e06d6" config-ref="Apache_Kafka_Producer_configuration" topic="muleEsb" key="[server.dateTime.getMilliSeconds()]"/>
+	</flow>
+	<flow name="apachekafkaprojectFlow" doc:id="39e3fe3b-b78d-4e1e-bb7d-75de32f60f22" >
+		<kafka:consumer doc:name="Message Consumer" doc:id="d0e64f72-6dd5-4aff-9c34-5e485d69078e" config-ref="Apache_Kafka_Consumer_configuration" topic="muleEsb"/>
+		<logger level="INFO" doc:name="Logger" doc:id="cc87b4e1-b763-467e-b1f7-a3edfdfee235" message="Message Consumed: #[payload]"/>
+		<file:write doc:name="Write" doc:id="e350130a-bf62-4439-b482-61acc89a05d8" path="src/test/resources/consumer" config-ref="File_Config"/>
+	</flow>
+</mule>
